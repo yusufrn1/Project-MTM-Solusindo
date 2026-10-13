@@ -97,7 +97,7 @@ mtm-solusindo/
 │   ├── CategoryCard.tsx
 │   ├── Footer.tsx
 │   ├── Navbar.tsx
-│   └── ProductCard.tsxx
+│   └── ProductCard.tsx
 ├── public/
 ├── package.json
 ├── README.md
