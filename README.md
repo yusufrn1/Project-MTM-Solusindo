@@ -93,11 +93,11 @@ mtm-solusindo/
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components/
-│   ├── button.tsx
-│   ├── categorycard.tsx
-│   ├── footer.tsx
-│   ├── navbar.tsx
-│   └── productcard.tsx
+│   ├── Button.tsx
+│   ├── CategoryCard.tsx
+│   ├── Footer.tsx
+│   ├── Navbar.tsx
+│   └── ProductCard.tsxx
 ├── public/
 ├── package.json
 ├── README.md
