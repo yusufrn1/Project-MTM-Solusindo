@@ -1,69 +1,204 @@
-import Image from "next/image";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import CategoryCard from "@/components/CategoryCard";
+import Button from "@/components/Button";
+
+const categories = [
+  {
+    number: "01",
+    title: "People Counting",
+    description:
+      "Solusi penghitungan pengunjung untuk membantu analisis kepadatan dan aktivitas pengunjung.",
+    icon: "👥",
+  },
+  {
+    number: "02",
+    title: "RFID Solutions",
+    description:
+      "Teknologi identifikasi dan pelacakan barang menggunakan radio frequency identification.",
+    icon: "📡",
+  },
+  {
+    number: "03",
+    title: "POS Systems",
+    description:
+      "Perangkat pendukung transaksi dan operasional bisnis retail.",
+    icon: "🖥️",
+  },
+  {
+    number: "04",
+    title: "Barcode Scanners",
+    description:
+      "Perangkat pemindai barcode untuk membantu proses identifikasi produk.",
+    icon: "▦",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen bg-white text-slate-900">
+      <Navbar activePage="beranda" />
+
+      <main>
+        {/* Hero */}
+        <section className="bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white">
+          <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 sm:py-28 lg:grid-cols-2 lg:items-center">
+            <div>
+              <p className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                Technology Solutions for Business
+              </p>
+
+              <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
+                Teknologi Tepat untuk{" "}
+                <span className="text-cyan-300">Bisnis Lebih Baik</span>
+              </h1>
+
+              <p className="mt-6 max-w-xl text-base leading-8 text-blue-100 sm:text-lg">
+                Jelajahi solusi teknologi untuk mendukung kebutuhan
+                identifikasi, pengelolaan data, dan operasional bisnis.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <a
+                 href="/katalog"
+  className="inline-flex items-center justify-center rounded-lg bg-blue-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-900"
+                >
+                  Jelajahi Katalog
+                </a>
+
+                <a
+                  href="/kontak"
+                  className="inline-flex items-center justify-center rounded-lg border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  Hubungi Kami
+                </a>
+              </div>
+            </div>
+
+            <div
+              className="flex min-h-64 items-center justify-center rounded-3xl border border-white/15 bg-white/5 p-8 sm:min-h-80"
+              aria-label="Ilustrasi teknologi MTM Solusindo"
+              role="img"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
+              <div className="text-center">
+                <div className="text-6xl font-black tracking-tight sm:text-8xl">
+                  MTM
+                </div>
+                <div className="mt-3 text-sm font-semibold tracking-[0.3em] text-cyan-300 sm:text-base">
+                  SOLUSINDO
+                </div>
+                <div className="mx-auto mt-6 h-1 w-24 rounded-full bg-cyan-300" />
+                <p className="mt-5 text-sm text-blue-100">
+                  Smart Technology · Business Solutions
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Categories */}
+        <section className="bg-slate-50 px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 max-w-2xl">
+              <p className="text-sm font-bold uppercase tracking-widest text-blue-800">
+                Solusi Kami
+              </p>
+
+              <h2 className="mt-3 text-3xl font-extrabold sm:text-4xl">
+                Jelajahi Kategori Teknologi
+              </h2>
+
+              <p className="mt-4 leading-7 text-slate-600">
+                Temukan kategori perangkat yang dapat disesuaikan dengan
+                kebutuhan operasional bisnis Anda.
+              </p>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {categories.map((category) => (
+                <CategoryCard key={category.number} {...category} />
+              ))}
+            </div>
+
+            <div className="mt-10 text-center">
+              <a
+                href="/katalog"
+                className="font-semibold text-blue-800 hover:text-blue-950"
+              >
+                Lihat seluruh katalog →
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Benefits */}
+        <section className="px-6 py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-10 md:grid-cols-3">
+              <article>
+                <div className="text-3xl" aria-hidden="true">
+                  🎯
+                </div>
+                <h2 className="mt-4 text-xl font-bold">
+                  Solusi Sesuai Kebutuhan
+                </h2>
+                <p className="mt-3 leading-7 text-slate-600">
+                  Jelajahi pilihan kategori teknologi berdasarkan kebutuhan
+                  operasional bisnis.
+                </p>
+              </article>
+
+              <article>
+                <div className="text-3xl" aria-hidden="true">
+                  🔎
+                </div>
+                <h2 className="mt-4 text-xl font-bold">
+                  Informasi Produk
+                </h2>
+                <p className="mt-3 leading-7 text-slate-600">
+                  Pelajari gambaran awal fungsi dan penggunaan perangkat
+                  melalui katalog.
+                </p>
+              </article>
+
+              <article>
+                <div className="text-3xl" aria-hidden="true">
+                  💬
+                </div>
+                <h2 className="mt-4 text-xl font-bold">
+                  Konsultasi Kebutuhan
+                </h2>
+                <p className="mt-3 leading-7 text-slate-600">
+                  Sampaikan kebutuhan bisnis melalui halaman kontak.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="bg-blue-50 px-6 py-16">
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="text-3xl font-extrabold">
+              Sedang Mencari Solusi Teknologi?
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-2xl leading-7 text-slate-600">
+              Mulai dengan menjelajahi katalog atau sampaikan kebutuhan
+              perangkat yang ingin Anda cari.
+            </p>
+
             <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href="/kontak"
+              className="mt-7 inline-flex rounded-lg bg-blue-800 px-6 py-3 font-semibold text-white transition hover:bg-blue-900"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+              Diskusikan Kebutuhan Anda
+            </a>
+          </div>
+        </section>
       </main>
+
+      <Footer />
     </div>
   );
 }

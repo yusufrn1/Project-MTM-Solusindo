@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MTM Solusindo — Technology Product Catalog
 
-## Getting Started
+## 1. Deskripsi Proyek
 
-First, run the development server:
+MTM Solusindo Technology Product Catalog merupakan prototipe antarmuka
+website katalog produk teknologi untuk kebutuhan bisnis.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Website ini dirancang untuk membantu calon pelanggan mengenali kategori
+produk, melihat informasi produk, dan menyampaikan kebutuhan teknologi
+melalui formulir konsultasi.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Proyek ini dibuat sebagai pemenuhan tugas Milestone 1 mata kuliah
+Pengembangan Aplikasi Web.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 2. Tujuan dan Target Pengguna
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Tujuan:
+- Menampilkan katalog produk teknologi dalam antarmuka yang responsif.
+- Mempermudah pengguna menemukan kategori produk yang relevan.
+- Menyediakan formulir konsultasi dengan validasi di sisi klien.
+- Menerapkan komponen antarmuka yang dapat digunakan kembali.
 
-## Learn More
+Target pengguna:
+- Perusahaan yang membutuhkan perangkat teknologi.
+- Tim operasional dan pengadaan.
+- Calon pelanggan yang mencari informasi produk teknologi.
 
-To learn more about Next.js, take a look at the following resources:
+## 3. Fitur Utama
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Halaman Beranda untuk memperkenalkan katalog dan kategori produk.
+- Halaman Katalog untuk melihat informasi produk.
+- Halaman Kontak untuk menyampaikan kebutuhan melalui formulir.
+- Navigasi ant halaman.
+- Komponen UI yang dapat digunakan kembali.
+- Validasi formulir pada sisi klien.
+- Pemilihan kategori otomatis melalui tautan dari katalog.
+- Tampilan responsif untuk perangkat mobile, tablet, dan desktop.
+- Elemen HTML semantik dan label formulir untuk mendukung aksesibilitas.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 4. Teknologi
 
-## Deploy on Vercel
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- ESLint
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 5. Halaman Website
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Beranda
+Memperkenalkan website, kategori teknologi, dan manfaat produk.
+
+### Katalog
+Menampilkan enam contoh produk teknologi yang dikelompokkan
+berdasarkan kategori.
+
+### Kontak
+Menyediakan formulir konsultasi dengan validasi nama, email,
+perusahaan, kategori kebutuhan, dan deskripsi kebutuhan.
+
+## 6. Data Produk
+
+Data produk dalam proyek ini merupakan data contoh untuk kebutuhan
+prototipe antarmuka. Nama, deskripsi, fitur, dan ID produk tidak
+dimaksudkan sebagai konfirmasi SKU resmi, harga, atau ketersediaan
+produk dari MTM Solusindo.
+
+## 7. Validasi Formulir
+
+Formulir melakukan pemeriksaan berikut:
+- Nama wajib diisi.
+- Email wajib diisi dan harus memiliki format yang valid.
+- Nama perusahaan wajib diisi.
+- Kategori kebutuhan wajib dipilih.
+- Deskripsi kebutuhan wajib diisi dengan minimal 10 karakter.
+
+Pesan kesalahan ditampilkan pada kolom yang memerlukan perbaikan.
+Jika semua input valid, website menampilkan pesan keberhasilan validasi.
+
+**Catatan:** Formulir masih berupa simulasi antarmuka. Data belum
+dikirim atau disimpan ke server.
+
+## 8. Struktur Proyek
+
+```text
+mtm-solusindo/
+├── app/
+│   ├── katalog/
+│   │   └── page.tsx
+│   ├── kontak/
+│   │   └── page.tsx
+│   ├── globals.css
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── button.tsx
+│   ├── categorycard.tsx
+│   ├── footer.tsx
+│   ├── navbar.tsx
+│   └── productcard.tsx
+├── public/
+├── package.json
+├── README.md
+└── tsconfig.json
