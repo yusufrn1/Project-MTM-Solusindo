@@ -1,0 +1,20 @@
+# Threat Model STRIDE — MTM Solusindo
+Versi: sec-0.1 (draft). Skala likelihood (L) dan impact (I): 1–5; skor = L×I. 1 berarti rendah/jarang, 5 sangat tinggi/sangat mungkin. Penilaian mengacu pada prototipe sekarang.
+
+| ID | STRIDE | Elemen DFD | Aset | Ancaman spesifik dan alasan | L | I | Skor | Kontrol awal |
+|---|---|---|---|---|---:|---:|---:|---|
+| T-01 | Spoofing | E-01, P-01, TB-1 | A-03, A-09 | Pengisi memasukkan identitas/perusahaan palsu. Tidak ada verifikasi identitas; dampak langsung terbatas karena form hanya simulasi. | 3 | 2 | 6 | Jika form aktif, verifikasi kontak di backend; jangan anggap isian sebagai identitas terverifikasi. (T2) |
+| T-02 | Tampering | P-01, D-02, F-05 | A-03, A-04 | Pengguna memodifikasi state/JavaScript untuk melewati validasi atau mengubah kategori/pesan; validasi hanya di browser. | 4 | 3 | 12 | Validasi server-side dan batas input jika backend ditambah; tes input negatif. (T2) |
+| T-03 | Repudiation | P-01, F-06 | A-03, A-09 | Pesan “validasi berhasil” dapat disalahartikan sebagai bukti pengajuan; tidak ada ID permintaan atau audit log server. | 3 | 2 | 6 | Perjelas wording simulasi; jika form aktif, buat ID permintaan dan log minimal di server. (T2) |
+| T-04 | Information Disclosure | P-01, F-05 | A-03 | Nama/email/perusahaan/pesan nyata dapat terlihat di browser/perangkat bersama atau sesi yang dibiarkan terbuka. Data tidak dikirim server saat ini. | 2 | 3 | 6 | Hindari data sensitif pada demo; jangan biarkan halaman terbuka di perangkat bersama. (T2) |
+| T-05 | Denial of Service | P-02, F-02, TB-1 | A-05, A-08, A-10 | Request berulang saat deployment publik bisa menghabiskan kapasitas hosting; belum ada API/database, jadi dampak utama adalah halaman tidak tersedia. | 2 | 3 | 6 | Hosting dengan proteksi trafik/cache, pemantauan, dan rollback. (T3) |
+| T-06 | Elevation of Privilege | D-04, P-02, TB-2 | A-01, A-10 | Akun repo dengan hak tulis yang diambil alih dapat mengubah source dan memengaruhi rilis. Repo publik hanya memberi akses baca, bukan otomatis hak tulis. | 2 | 4 | 8 | MFA, batasi collaborator/token, review perubahan sebelum rilis. (T3) |
+| T-07 | Tampering | D-01, P-02, TB-2 | A-01, A-02 | Perubahan tidak sah pada array produk di `app/katalog/page.tsx` mengubah nama/deskripsi/kategori yang dilihat pengguna; HMAC belum berjalan di runtime. | 3 | 4 | 12 | Proteksi branch/review; integrasikan verifikasi HMAC server-side jika sesuai desain. (T2/T3) |
+| T-08 | Repudiation | D-04, TB-2 | A-01, A-09 | Perubahan sulit diatribusikan jika akun dibagi atau review tidak dilakukan; Git punya riwayat, tetapi atribusi bergantung keamanan akun/proses. | 2 | 3 | 6 | Akun individual, MFA, review diff dan pesan commit. (T3) |
+| T-09 | Information Disclosure | P-03, D-03, TB-3 | A-06, A-07 | Jika secret HMAC ditaruh di source, commit, log, atau bundle browser saat integrasi, pihak lain dapat memalsukan signature. Belum ada secret produksi sekarang. | 2 | 5 | 10 | Simpan secret di environment server/secret manager; jangan commit atau kirim ke browser; rotasi jika bocor. (T2) |
+| T-10 | Tampering | P-03, P-04, F-07/F-09 | A-06, A-02 | Payload JSON yang diserialisasi tidak konsisten dapat menghasilkan HMAC berbeda atau verifikasi gagal; fungsi menerima string dan tidak melakukan canonicalization otomatis. | 3 | 3 | 9 | Tetapkan canonicalization/schema dan tambah tes representasi payload. (T2) |
+| T-11 | Spoofing | P-02, F-02/F-03, TB-1 | A-01, A-02 | Pengguna mengikuti situs/domain tiruan dan mengira kontennya resmi. Risiko bergantung cara tautan dibagikan; belum ada login. | 2 | 4 | 8 | Gunakan domain resmi, HTTPS, dan bagikan URL resmi. (T3) |
+| T-12 | Denial of Service | P-01, F-05 | A-05 | Pesan sangat panjang dapat membebani browser karena tidak ada batas maksimum eksplisit; dampak lokal terbatas sebab form tidak dikirim server. | 2 | 2 | 4 | Batas panjang maksimum di UI dan validasi server jika backend ditambah. (T2) |
+
+## Catatan
+Semua enam kategori STRIDE tercakup. Ancaman dibedakan antara kondisi yang ada dan skenario deployment/integrasi masa depan. Tidak diasumsikan adanya database, API form, login, atau pembayaran.
