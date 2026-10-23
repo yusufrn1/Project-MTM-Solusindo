@@ -1,5 +1,8 @@
+import Link from "next/link";
+
 type ProductCardProps = {
-  id: string;
+  id: number;
+  kode: string;
   name: string;
   category: string;
   description: string;
@@ -8,6 +11,7 @@ type ProductCardProps = {
 
 export default function ProductCard({
   id,
+  kode,
   name,
   category,
   description,
@@ -20,7 +24,7 @@ export default function ProductCard({
           {category}
         </span>
 
-        <span className="text-xs text-slate-400">{id}</span>
+        <span className="text-xs text-slate-400">{kode}</span>
       </div>
 
       <h2 className="text-lg font-bold text-slate-900">{name}</h2>
@@ -40,12 +44,12 @@ export default function ProductCard({
         ))}
       </ul>
 
-      <a
-        href={`/kontak?kategori=${encodeURIComponent(category)}`}
+      <Link
+        href={`/katalog/${id}`}
         className="mt-auto pt-6 text-sm font-semibold text-blue-800 hover:text-blue-950"
       >
-        Hubungi kami untuk informasi produk →
-      </a>
+        Lihat detail produk →
+      </Link>
     </article>
   );
 }

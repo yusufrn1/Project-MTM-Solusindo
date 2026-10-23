@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -32,22 +32,22 @@ const categories = [
 ];
 
 export default function KontakPage() {
-  const [form, setForm] = useState<FormData>(initialForm);
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState<FormData>(() => {
+  if (typeof window === "undefined") {
+    return initialForm;
+  }
 
-  // Mengambil kategori dari URL ketika halaman dibuka.
-  useEffect(() => {
   const params = new URLSearchParams(window.location.search);
   const requestedCategory = params.get("kategori");
 
   if (requestedCategory && categories.includes(requestedCategory)) {
-    setForm((previous) => ({
-      ...previous,
-      kategori: requestedCategory,
-    }));
+    return { ...initialForm, kategori: requestedCategory };
   }
-}, []);
+
+  return initialForm;
+});
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [submitted, setSubmitted] = useState(false);
 
   function validateForm(): FormErrors {
     const newErrors: FormErrors = {};
@@ -120,7 +120,7 @@ export default function KontakPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <Navbar activePage="kontak" />
+      <Navbar />
 
       <main>
         {/* Hero */}

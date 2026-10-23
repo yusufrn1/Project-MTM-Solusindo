@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
-import Button from "@/components/Button";
+import Link from "next/link";
 
 const categories = [
   {
@@ -37,7 +37,7 @@ const categories = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <Navbar activePage="beranda" />
+      <Navbar />
 
       <main>
         {/* Hero */}
@@ -59,19 +59,19 @@ export default function Home() {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
-                <a
-                 href="/katalog"
-  className="inline-flex items-center justify-center rounded-lg bg-blue-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-900"
+                <Link
+                  href="/katalog"
+                  className="inline-flex items-center justify-center rounded-lg bg-blue-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-900"
                 >
                   Jelajahi Katalog
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/kontak"
                   className="inline-flex items-center justify-center rounded-lg border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                 >
                   Hubungi Kami
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -121,12 +121,12 @@ export default function Home() {
             </div>
 
             <div className="mt-10 text-center">
-              <a
+              <Link
                 href="/katalog"
                 className="font-semibold text-blue-800 hover:text-blue-950"
               >
                 Lihat seluruh katalog →
-              </a>
+              </Link>
             </div>
           </div>
         </section>
@@ -188,12 +188,12 @@ export default function Home() {
               perangkat yang ingin Anda cari.
             </p>
 
-            <a
+            <Link
               href="/kontak"
               className="mt-7 inline-flex rounded-lg bg-blue-800 px-6 py-3 font-semibold text-white transition hover:bg-blue-900"
             >
               Diskusikan Kebutuhan Anda
-            </a>
+            </Link>
           </div>
         </section>
       </main>

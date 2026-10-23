@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="bg-slate-950 px-6 py-8 text-sm text-slate-300">
@@ -10,15 +12,15 @@ export default function Footer() {
         </div>
 
         <nav aria-label="Navigasi footer" className="flex flex-wrap gap-5">
-          <a href="/" className="hover:text-cyan-300">
+          <Link href="/" className="hover:text-cyan-300">
             Beranda
-          </a>
-          <a href="/katalog" className="hover:text-cyan-300">
+          </Link>
+          <Link href="/katalog" className="hover:text-cyan-300">
             Katalog
-          </a>
-          <a href="/kontak" className="hover:text-cyan-300">
+          </Link>
+          <Link href="/kontak" className="hover:text-cyan-300">
             Kontak
-          </a>
+          </Link>
         </nav>
       </div>
 
