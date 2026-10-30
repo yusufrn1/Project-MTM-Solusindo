@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
+import Image from "next/image";
 import Link from "next/link";
 
 const categories = [
@@ -41,11 +42,23 @@ export default function Home() {
 
       <main>
         {/* Hero */}
-        <section className="bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white">
-          <div className="mx-auto grid max-w-7xl gap-12 px-6 py-20 sm:py-28 lg:grid-cols-2 lg:items-center">
-            <div>
+        <section className="relative isolate min-h-[560px] overflow-hidden bg-slate-950 text-white">
+          <div className="absolute inset-0 -z-10">
+            <Image
+              src="/images/hero-engineering.jpg"
+              alt=""
+              width={1800}
+              height={1100}
+              priority
+              sizes="100vw"
+              className="absolute inset-0 h-full w-full object-cover object-[center_45%]"
+            />
+          </div>
+          <div className="absolute inset-0 -z-10 bg-slate-950/65" />
+          <div className="mx-auto flex min-h-[560px] max-w-7xl items-center px-6 py-20 sm:py-24">
+            <div className="max-w-3xl">
               <p className="mb-5 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                Technology Solutions for Business
+                Solusi Teknologi Bisnis
               </p>
 
               <h1 className="text-4xl font-extrabold leading-tight sm:text-5xl lg:text-6xl">
@@ -55,13 +68,14 @@ export default function Home() {
 
               <p className="mt-6 max-w-xl text-base leading-8 text-blue-100 sm:text-lg">
                 Jelajahi solusi teknologi untuk mendukung kebutuhan
-                identifikasi, pengelolaan data, dan operasional bisnis.
+                identifikasi, transaksi, pengelolaan data, dan operasional
+                bisnis.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link
                   href="/katalog"
-                  className="inline-flex items-center justify-center rounded-lg bg-blue-800 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-900"
+                  className="inline-flex items-center justify-center rounded-lg bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300"
                 >
                   Jelajahi Katalog
                 </Link>
@@ -72,25 +86,6 @@ export default function Home() {
                 >
                   Hubungi Kami
                 </Link>
-              </div>
-            </div>
-
-            <div
-              className="flex min-h-64 items-center justify-center rounded-3xl border border-white/15 bg-white/5 p-8 sm:min-h-80"
-              aria-label="Ilustrasi teknologi MTM Solusindo"
-              role="img"
-            >
-              <div className="text-center">
-                <div className="text-6xl font-black tracking-tight sm:text-8xl">
-                  MTM
-                </div>
-                <div className="mt-3 text-sm font-semibold tracking-[0.3em] text-cyan-300 sm:text-base">
-                  SOLUSINDO
-                </div>
-                <div className="mx-auto mt-6 h-1 w-24 rounded-full bg-cyan-300" />
-                <p className="mt-5 text-sm text-blue-100">
-                  Smart Technology · Business Solutions
-                </p>
               </div>
             </div>
           </div>

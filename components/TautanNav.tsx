@@ -8,6 +8,7 @@ const tautan = [
   { href: "/katalog", label: "Katalog" },
   { href: "/tentang", label: "Tentang" },
   { href: "/kontak", label: "Kontak" },
+  { href: "/masuk", label: "Login Pengelola" },
 ];
 
 export default function TautanNav() {

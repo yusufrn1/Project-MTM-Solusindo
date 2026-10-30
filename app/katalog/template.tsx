@@ -1,16 +1,5 @@
-import KolomCatatan from "@/components/KolomCatatan";
+import type { ReactNode } from "react";
 
-export default function KatalogTemplate({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <aside className="mb-6 max-w-md" aria-label="Catatan template">
-        <KolomCatatan label="Catatan di template" />
-      </aside>
-      {children}
-    </div>
-  );
+export default function KatalogTemplate({ children }: { children: ReactNode }) {
+  return children;
 }

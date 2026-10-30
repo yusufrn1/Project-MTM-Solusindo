@@ -25,14 +25,23 @@ export default function KatalogPage() {
         </section>
 
         <section className="mx-auto max-w-7xl px-6 py-14 sm:py-16">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold">Pilihan Produk</h2>
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <h2 className="text-2xl font-bold">Pilihan Produk</h2>
 
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Data produk berikut merupakan contoh untuk prototipe akademik,
-              bukan daftar SKU resmi atau konfirmasi ketersediaan produk MTM
-              Solusindo.
-            </p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                Data produk berikut merupakan contoh untuk prototipe akademik,
+                bukan daftar SKU resmi atau konfirmasi ketersediaan produk MTM
+                Solusindo.
+              </p>
+            </div>
+
+            <Link
+              href="/katalog/tambah"
+              className="rounded-lg border border-blue-800 px-4 py-2 text-sm font-semibold text-blue-900 transition hover:bg-blue-50"
+            >
+              Kelola katalog
+            </Link>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

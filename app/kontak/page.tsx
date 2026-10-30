@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import { z } from "zod";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { kategoriKontak, skemaKontak } from "@/lib/skema";
 
 type FormData = {
   nama: string;
@@ -22,15 +24,6 @@ const initialForm: FormData = {
   pesan: "",
 };
 
-const categories = [
-  "People Counting",
-  "RFID Solutions",
-  "POS Systems",
-  "Barcode Scanners",
-  "Data Collection",
-  "Lainnya",
-];
-
 export default function KontakPage() {
   const [form, setForm] = useState<FormData>(() => {
   if (typeof window === "undefined") {
@@ -40,7 +33,10 @@ export default function KontakPage() {
   const params = new URLSearchParams(window.location.search);
   const requestedCategory = params.get("kategori");
 
-  if (requestedCategory && categories.includes(requestedCategory)) {
+  if (
+    requestedCategory &&
+    kategoriKontak.some((category) => category === requestedCategory)
+  ) {
     return { ...initialForm, kategori: requestedCategory };
   }
 
@@ -48,36 +44,6 @@ export default function KontakPage() {
 });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
-
-  function validateForm(): FormErrors {
-    const newErrors: FormErrors = {};
-
-    if (!form.nama.trim()) {
-      newErrors.nama = "Nama wajib diisi.";
-    }
-
-    if (!form.email.trim()) {
-      newErrors.email = "Email wajib diisi.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "Masukkan alamat email yang valid.";
-    }
-
-    if (!form.perusahaan.trim()) {
-      newErrors.perusahaan = "Nama perusahaan wajib diisi.";
-    }
-
-    if (!form.kategori) {
-      newErrors.kategori = "Pilih kategori kebutuhan Anda.";
-    }
-
-    if (!form.pesan.trim()) {
-      newErrors.pesan = "Pesan wajib diisi.";
-    } else if (form.pesan.trim().length < 10) {
-      newErrors.pesan = "Pesan minimal 10 karakter.";
-    }
-
-    return newErrors;
-  }
 
   function handleChange(
     event: ChangeEvent<
@@ -102,10 +68,20 @@ export default function KontakPage() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const newErrors = validateForm();
+    const result = skemaKontak.safeParse(form);
+    const fieldErrors = result.success
+      ? undefined
+      : z.flattenError(result.error).fieldErrors;
+    const newErrors: FormErrors = {
+      nama: fieldErrors?.nama?.[0],
+      email: fieldErrors?.email?.[0],
+      perusahaan: fieldErrors?.perusahaan?.[0],
+      kategori: fieldErrors?.kategori?.[0],
+      pesan: fieldErrors?.pesan?.[0],
+    };
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length > 0) {
+    if (!result.success) {
       setSubmitted(false);
       return;
     }
@@ -317,7 +293,7 @@ export default function KontakPage() {
                 >
                   <option value="">Pilih kategori</option>
 
-                  {categories.map((category) => (
+                  {kategoriKontak.map((category) => (
                     <option key={category} value={category}>
                       {category}
                     </option>

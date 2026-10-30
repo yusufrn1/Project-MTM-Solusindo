@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { cariProduk, daftarProduk } from "@/lib/data";
 
 type DetailProdukPageProps = {
@@ -12,7 +14,21 @@ export function generateStaticParams() {
   }));
 }
 
-export default async function DetailProdukPage({
+export default function DetailProdukPage({ params }: DetailProdukPageProps) {
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto max-w-4xl px-6 py-16">
+          <p role="status">Memuat detail produk...</p>
+        </main>
+      }
+    >
+      <DetailProduk params={params} />
+    </Suspense>
+  );
+}
+
+async function DetailProduk({
   params,
 }: DetailProdukPageProps) {
   const { id } = await params;
@@ -39,6 +55,19 @@ export default async function DetailProdukPage({
         </Link>
 
         <article className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-10">
+          <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-lg bg-slate-100">
+            <Image
+              src={product.image}
+              alt={product.imageAlt}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+              priority
+            />
+            <span className="absolute bottom-3 left-3 rounded-sm bg-white/90 px-2 py-1 text-xs font-medium text-slate-700">
+              Ilustrasi kategori, bukan foto model produk
+            </span>
+          </div>
           <p className="text-sm font-semibold uppercase tracking-widest text-blue-800">
             {product.category}
           </p>
