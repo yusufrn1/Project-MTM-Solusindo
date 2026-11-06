@@ -8,7 +8,7 @@
 
 Pemeriksaan yang berhasil dijalankan pada workspace: `npx prisma validate`, `npx prisma migrate status`, `npm run db:generate`, dua kali `npm run db:seed`, `npm run db:test`, `npx tsc --noEmit`, `npm run lint`, dan `npm test`. Hasil `npm run db:test`: 11/11 tes integrasi lulus. Hasil `npm test`: 34 tes lulus dan 11 tes integrasi dilewati karena perintah tersebut tidak mengaktifkan `RUN_DB_TESTS=1`.
 
-### Status bukti untuk dilengkapi
+### Ringkasan Bukti
 
 - [x] Tangkapan layar struktur tabel `Review` dari `psql`: `docs/praktikum/postgreSQL_constraint.png`.
 - [x] Keluaran seed pertama dan kedua dengan jumlah produk/ulasan yang sama: 7 produk dan 8 ulasan pada kedua eksekusi; tangkapan layar `docs/praktikum/2seed.png`.
@@ -105,7 +105,7 @@ Pemeriksaan database mengonfirmasi foreign key `Review_productId_fkey` dengan `O
 
 Data produk sintetis berada di `prisma/data-awal.ts`. Seed di `prisma/seed.ts` memakai upsert pada nama produk serta pasangan `(productId, name)` untuk ulasan sehingga dapat dijalankan ulang.
 
-Seed memakai `upsert`: produk dicari berdasarkan nama unik, lalu ulasan berdasarkan pasangan unik `(productId, name)`. Karena itu, eksekusi ulang tidak membuat baris duplikat. Perintah yang perlu dijalankan setelah migrasi:
+Seed memakai `upsert`: produk dicari berdasarkan nama unik, lalu ulasan berdasarkan pasangan unik `(productId, name)`. Karena itu, eksekusi ulang tidak membuat baris duplikat. Perintah yang digunakan untuk memverifikasi seed dan memeriksa data:
 
 ```bash
 npm run db:seed
