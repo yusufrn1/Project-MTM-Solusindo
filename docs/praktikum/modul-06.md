@@ -11,7 +11,7 @@ Pemeriksaan yang berhasil dijalankan pada workspace: `npx prisma validate`, `npx
 ### Status bukti untuk dilengkapi
 
 - [x] Tangkapan layar struktur tabel `Review` dari `psql`: `docs/praktikum/postgreSQL_constraint.png`.
-- [x] Keluaran seed pertama dan kedua dengan jumlah produk/ulasan yang sama: 7 produk dan 8 ulasan pada kedua eksekusi.
+- [x] Keluaran seed pertama dan kedua dengan jumlah produk/ulasan yang sama: 7 produk dan 8 ulasan pada kedua eksekusi; tangkapan layar `docs/praktikum/2seed.png`.
 - [x] Tangkapan layar data ulasan di Prisma Studio: `docs/evidence/modul-06-prisma-studio.png`.
 - [x] Tangkapan layar pesan validasi nama produk duplikat (P2002): `docs/praktikum/nama_produk_sudah_digunakan.png`.
 - [x] Tangkapan layar pesan produk tidak ditemukan (P2025): `docs/praktikum/produk_tidak_ditemukan_atau_sudah_dihapus.png`.
@@ -120,6 +120,8 @@ Eksekusi seed pertama: Seed selesai: 7 produk, 8 ulasan
 Eksekusi seed kedua:   Seed selesai: 7 produk, 8 ulasan
 ```
 
+![Keluaran seed yang dijalankan dua kali](2seed.png)
+
 Tangkapan layar tabel `Review` di Prisma Studio tersimpan di `docs/evidence/modul-06-prisma-studio.png` dan menampilkan data ulasan dari database lokal.
 
 ![Data ulasan pada Prisma Studio](../evidence/modul-06-prisma-studio.png)
@@ -181,4 +183,4 @@ Hasil `npm run db:test`: 11/11 skenario lulus (100%). Target modul minimal 9 dar
 
 ## 8. Catatan Pemanfaatan AI
 
-GitHub Copilot membantu meninjau kode dan menyusun dokumentasi serta skenario verifikasi. Perintah yang dijalankan: `npx prisma validate` (berhasil), `npx prisma migrate status` (up to date), `npm run db:generate` (berhasil), `npm run db:seed` dua kali (masing-masing 7 produk dan 8 ulasan), `npm run db:test` (11/11 lulus), `npx tsc --noEmit` (berhasil), `npm run lint` (berhasil), dan `npm test` (34 lulus, 11 integrasi dilewati). Tangkapan layar PostgreSQL tersimpan di `docs/praktikum/postgreSQL_constraint.png`, Prisma Studio di `docs/evidence/modul-06-prisma-studio.png`, P2002 di `docs/praktikum/nama_produk_sudah_digunakan.png`, P2025 di `docs/praktikum/produk_tidak_ditemukan_atau_sudah_dihapus.png`, dan hasil tes rollback di `rollback.png`.
+GitHub Copilot membantu meninjau kode dan menyusun dokumentasi serta skenario verifikasi. Perintah yang dijalankan: `npx prisma validate` (berhasil), `npx prisma migrate status` (up to date), `npm run db:generate` (berhasil), `npm run db:seed` dua kali (masing-masing 7 produk dan 8 ulasan), `npm run db:test` (11/11 lulus), `npx tsc --noEmit` (berhasil), `npm run lint` (berhasil), dan `npm test` (34 lulus, 11 integrasi dilewati). Tangkapan layar seed tersimpan di `docs/praktikum/2seed.png`, PostgreSQL di `docs/praktikum/postgreSQL_constraint.png`, Prisma Studio di `docs/evidence/modul-06-prisma-studio.png`, P2002 di `docs/praktikum/nama_produk_sudah_digunakan.png`, P2025 di `docs/praktikum/produk_tidak_ditemukan_atau_sudah_dihapus.png`, dan hasil tes rollback di `rollback.png`.
