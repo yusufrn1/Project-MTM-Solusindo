@@ -9,8 +9,31 @@ const awal: StatusForm = {};
 const kolom =
   "mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-100";
 
-export default function FormProduk() {
-  const [status, aksi, pending] = useActionState(simpanProduk, awal);
+type AksiProduk = (
+  sebelumnya: StatusForm,
+  formData: FormData,
+) => Promise<StatusForm>;
+
+type NilaiAwalProduk = {
+  name: string;
+  category: string;
+  description: string;
+  features: string[];
+  aktif: boolean;
+};
+
+type FormProdukProps = {
+  action?: AksiProduk;
+  initialValues?: NilaiAwalProduk;
+  submitLabel?: string;
+};
+
+export default function FormProduk({
+  action = simpanProduk,
+  initialValues,
+  submitLabel = "Simpan produk",
+}: FormProdukProps) {
+  const [status, aksi, pending] = useActionState(action, awal);
   const errors = status.galat;
   const values = status.nilai;
 
@@ -26,7 +49,7 @@ export default function FormProduk() {
           required
           minLength={3}
           maxLength={80}
-          defaultValue={values?.name}
+          defaultValue={values?.name ?? initialValues?.name}
           className={kolom}
           aria-invalid={Boolean(errors?.name)}
           aria-describedby="error-name"
@@ -45,7 +68,7 @@ export default function FormProduk() {
           id="category"
           name="category"
           required
-          defaultValue={values?.category ?? ""}
+          defaultValue={values?.category ?? initialValues?.category ?? ""}
           className={kolom}
           aria-invalid={Boolean(errors?.category)}
           aria-describedby="error-category"
@@ -75,7 +98,7 @@ export default function FormProduk() {
           minLength={10}
           maxLength={300}
           rows={4}
-          defaultValue={values?.description}
+          defaultValue={values?.description ?? initialValues?.description}
           className={kolom}
           aria-invalid={Boolean(errors?.description)}
           aria-describedby="error-description"
@@ -95,7 +118,9 @@ export default function FormProduk() {
           required
           maxLength={500}
           rows={4}
-          defaultValue={values?.features}
+          defaultValue={
+            values?.features ?? initialValues?.features.join("\n")
+          }
           className={kolom}
           aria-invalid={Boolean(errors?.features)}
           aria-describedby="error-features features-hint"
@@ -114,7 +139,9 @@ export default function FormProduk() {
             type="checkbox"
             name="aktif"
             value="on"
-            defaultChecked={values?.aktif === "on"}
+            defaultChecked={
+              values ? values.aktif === "on" : initialValues?.aktif ?? false
+            }
             aria-invalid={Boolean(errors?.aktif)}
             aria-describedby="error-aktif"
           />
@@ -130,7 +157,7 @@ export default function FormProduk() {
         disabled={pending}
         className="rounded-lg bg-blue-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {pending ? "Menyimpan..." : "Simpan produk"}
+        {pending ? "Menyimpan..." : submitLabel}
       </button>
       <p role="status" aria-live="polite" className="text-sm text-slate-700">
         {status.pesan}

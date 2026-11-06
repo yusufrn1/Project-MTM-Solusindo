@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { skemaProduk } from "../lib/skema";
+import { skemaProduk, skemaUlasan } from "../lib/skema";
 
 const produkValid = {
   name: "RFID Gateway",
@@ -48,5 +48,35 @@ describe("validasi server skemaProduk", () => {
 
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.aktif).toBe(false);
+  });
+});
+
+describe("validasi server skemaUlasan", () => {
+  const ulasanValid = {
+    name: "Pelanggan Uji",
+    rating: "5",
+    comment: "Produk bekerja dengan baik.",
+  };
+
+  it("menerima ulasan valid dan mengubah nilai menjadi angka", () => {
+    const result = skemaUlasan.safeParse(ulasanValid);
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.rating).toBe(5);
+  });
+
+  it.each(["0", "6", "2.5", "bukan-angka"])(
+    "menolak nilai %s di luar rentang 1–5 atau bukan bilangan bulat",
+    (rating) => {
+      expect(skemaUlasan.safeParse({ ...ulasanValid, rating }).success).toBe(
+        false,
+      );
+    },
+  );
+
+  it("menolak komentar yang terlalu pendek", () => {
+    expect(
+      skemaUlasan.safeParse({ ...ulasanValid, comment: "ok" }).success,
+    ).toBe(false);
   });
 });

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import TautanNav from "./TautanNav";
 
@@ -13,7 +14,9 @@ export default function Navbar() {
         </Link>
 
         <div className="text-sm font-medium">
-          <TautanNav />
+          <Suspense fallback={<div className="h-5 w-48" aria-hidden="true" />}>
+            <TautanNav />
+          </Suspense>
         </div>
       </nav>
     </header>

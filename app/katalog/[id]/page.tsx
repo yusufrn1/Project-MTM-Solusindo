@@ -1,18 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
-import { cariProduk, daftarProduk } from "@/lib/data";
+import { hapusProduk } from "@/app/katalog/actions";
+import { hapusUlasan } from "@/app/katalog/ulasan-actions";
+import FormUlasan from "@/components/FormUlasan";
+import { bacaSesi } from "@/lib/sesi";
+import { cariProduk } from "@/lib/data";
 
 type DetailProdukPageProps = {
   params: Promise<{ id: string }>;
 };
-
-export function generateStaticParams() {
-  return daftarProduk().map((produk) => ({
-    id: String(produk.id),
-  }));
-}
 
 export default function DetailProdukPage({ params }: DetailProdukPageProps) {
   return (
@@ -31,6 +30,7 @@ export default function DetailProdukPage({ params }: DetailProdukPageProps) {
 async function DetailProduk({
   params,
 }: DetailProdukPageProps) {
+  await connection();
   const { id } = await params;
 
   if (!/^[1-9]\d*$/.test(id)) {
@@ -39,11 +39,12 @@ async function DetailProduk({
 
   const productId = Number(id);
 
-  const product = cariProduk(productId);
+  const product = await cariProduk(productId);
 
   if (!product) {
     notFound();
   }
+  const sesi = await bacaSesi();
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-16">
@@ -108,7 +109,58 @@ async function DetailProduk({
           >
             Hubungi Kami →
           </Link>
+
+          {sesi && (
+            <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-slate-200 pt-5">
+              <Link
+                href={`/katalog/${product.id}/ubah`}
+                className="text-sm font-semibold text-blue-800 hover:text-blue-950"
+              >
+                Ubah produk
+              </Link>
+              <form action={hapusProduk.bind(null, product.id)}>
+                <button
+                  type="submit"
+                  className="text-sm font-semibold text-red-700 hover:text-red-900"
+                >
+                  Hapus produk
+                </button>
+              </form>
+            </div>
+          )}
         </article>
+
+        <section className="mt-10">
+          <h2 className="text-2xl font-bold">
+            Ulasan ({product.reviews?.length ?? 0})
+          </h2>
+          <ul className="mt-4 space-y-4">
+            {product.reviews?.map((review) => (
+              <li
+                key={review.id}
+                className="rounded-lg border border-slate-200 bg-white p-5"
+              >
+                <p className="font-semibold">
+                  {review.name} · {review.rating}/5
+                </p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {review.comment}
+                </p>
+                {sesi && (
+                  <form
+                    action={hapusUlasan.bind(null, review.id, product.id)}
+                    className="mt-3"
+                  >
+                    <button className="text-sm text-red-700 underline">
+                      Hapus ulasan
+                    </button>
+                  </form>
+                )}
+              </li>
+            ))}
+          </ul>
+          <FormUlasan productId={product.id} />
+        </section>
     </main>
   );
 }

@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import ProductCard from "@/components/ProductCard";
 import { daftarProduk } from "@/lib/data";
 
-export default function KatalogPage() {
-  const products = daftarProduk();
+export default async function KatalogPage() {
+  await connection();
+  const products = await daftarProduk();
 
   return (
     <main>
