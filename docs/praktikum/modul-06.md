@@ -99,6 +99,8 @@ npm run db:generate
 
 Pemeriksaan database mengonfirmasi foreign key `Review_productId_fkey` dengan `ON UPDATE CASCADE ON DELETE RESTRICT`. Tangkapan layar perintah `\d "Review"` tersedia di `docs/praktikum/postgreSQL_constraint.png`.
 
+![Struktur tabel Review dan foreign key ON DELETE RESTRICT](postgreSQL_constraint.png)
+
 ## 3. Seed dan Prisma Client
 
 Data produk sintetis berada di `prisma/data-awal.ts`. Seed di `prisma/seed.ts` memakai upsert pada nama produk serta pasangan `(productId, name)` untuk ulasan sehingga dapat dijalankan ulang.
@@ -120,6 +122,8 @@ Eksekusi seed kedua:   Seed selesai: 7 produk, 8 ulasan
 
 Tangkapan layar tabel `Review` di Prisma Studio tersimpan di `docs/evidence/modul-06-prisma-studio.png` dan menampilkan data ulasan dari database lokal.
 
+![Data ulasan pada Prisma Studio](../evidence/modul-06-prisma-studio.png)
+
 ## 4. Operasi CRUD
 
 | Operasi | Lokasi | Operasi Prisma | Penanganan |
@@ -134,6 +138,10 @@ Tangkapan layar tabel `Review` di Prisma Studio tersimpan di `docs/evidence/modu
 
 Tangkapan layar P2002 tersedia di `docs/praktikum/nama_produk_sudah_digunakan.png` dan menampilkan pesan “Nama produk sudah digunakan.” Tangkapan layar P2025 tersedia di `docs/praktikum/produk_tidak_ditemukan_atau_sudah_dihapus.png` dan menampilkan pesan “Produk tidak ditemukan atau sudah dihapus.”
 
+![Pesan validasi nama produk duplikat P2002](nama_produk_sudah_digunakan.png)
+
+![Pesan produk tidak ditemukan atau sudah dihapus P2025](produk_tidak_ditemukan_atau_sudah_dihapus.png)
+
 ## 5. Transaksi dan Rollback
 
 Aksi hapus produk menjalankan penghapusan ulasan lalu produk menggunakan `$transaction([...])`. Tes integrasi lulus untuk penghapusan langsung yang ditolak oleh RESTRICT, rollback ketika query kedua gagal, dan penghapusan atomik produk beserta ulasannya.
@@ -141,6 +149,8 @@ Aksi hapus produk menjalankan penghapusan ulasan lalu produk menggunakan `$trans
 **Hasil aktual:** tes `10. transaksi me-rollback penghapusan ulasan saat hapus produk gagal` lulus. Setelah query kedua gagal dengan `P2025`, tes memastikan ulasan masih berjumlah 1. Tes `11. transaksi menghapus ulasan dan produk bersama-sama` juga lulus.
 
 Tangkapan layar `rollback.png` menunjukkan keluaran `npm run db:test` dengan 11/11 tes lulus, termasuk tes rollback. Tes tersebut memeriksa jumlah ulasan tetap 1 setelah query kedua gagal; data uji dibersihkan setelah suite selesai.
+
+![Hasil tes integrasi dan rollback](../../rollback.png)
 
 ## 6. Skenario Uji
 
