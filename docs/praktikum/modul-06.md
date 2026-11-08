@@ -6,7 +6,7 @@
 
 > Status pengerjaan: migrasi sudah diterapkan, Prisma Client berhasil dibuat, seed berhasil dijalankan dua kali dengan jumlah data yang sama, dan 11 tes integrasi PostgreSQL lulus. Tangkapan layar psql, Prisma Studio, P2002, P2025, dan tes rollback sudah disimpan. Jangan menaruh `.env` di Git atau mengirim kredensial ke chat.
 
-Pemeriksaan yang berhasil dijalankan pada workspace: `npx prisma validate`, `npx prisma migrate status`, `npm run db:generate`, dua kali `npm run db:seed`, `npm run db:test`, `npx tsc --noEmit`, `npm run lint`, dan `npm test`. Hasil `npm run db:test`: 11/11 tes integrasi lulus. Hasil `npm test`: 34 tes lulus dan 11 tes integrasi dilewati karena perintah tersebut tidak mengaktifkan `RUN_DB_TESTS=1`.
+Pemeriksaan yang berhasil dijalankan pada workspace: `npx prisma validate`, `npx prisma migrate status`, `npm run db:generate`, dua kali `npm run db:seed`, `npm run db:test`, `npx tsc --noEmit`, `npm run lint`, dan `npm test`. Hasil `npm run db:test`: 11/11 tes integrasi lulus. Hasil `npm test`: 38 tes lulus dan 11 tes integrasi dilewati karena perintah tersebut tidak mengaktifkan `RUN_DB_TESTS=1`.
 
 ### Ringkasan Bukti
 
@@ -136,6 +136,7 @@ Tangkapan layar tabel `Review` di Prisma Studio tersimpan di `docs/evidence/modu
 | Ubah produk | `app/katalog/actions.ts` | `product.update` | P2002 dan P2025 menjadi pesan aman |
 | Hapus produk | `app/katalog/actions.ts` | `$transaction` berisi `review.deleteMany` dan `product.delete` | P2025 diarahkan kembali ke katalog |
 | Tambah ulasan | `app/katalog/ulasan-actions.ts` | `review.create` | Zod; P2002 duplikat, P2003 produk tidak ada |
+| Ubah ulasan | `app/katalog/ulasan-actions.ts` | `review.updateMany` | Sesi pengelola dan Zod; P2002 nama duplikat |
 | Hapus ulasan | `app/katalog/ulasan-actions.ts` | `review.deleteMany` | Dibatasi dengan ID produk dan sesi pengelola |
 
 Tangkapan layar P2002 tersedia di `docs/praktikum/nama_produk_sudah_digunakan.png` dan menampilkan pesan “Nama produk sudah digunakan.” Tangkapan layar P2025 tersedia di `docs/praktikum/produk_tidak_ditemukan_atau_sudah_dihapus.png` dan menampilkan pesan “Produk tidak ditemukan atau sudah dihapus.”
@@ -160,19 +161,19 @@ Tes integrasi berada di `tests/prisma-crud.integration.test.ts` (11 skenario) da
 
 | # | Skenario | Hasil yang diharapkan | Hasil aktual |
 |---|---|---|---|
-| 1 | Tambah produk sah | Produk tersimpan dan ID dibuat | Lulus |
-| 2 | Baca daftar produk | Produk tersimpan muncul | Lulus |
-| 3 | Baca produk beserta ulasan | Produk dan relasi terbaca | Lulus |
-| 4 | Ubah deskripsi produk | Perubahan tersimpan | Lulus |
-| 5 | Tambah produk dengan nama duplikat | P2002 ditolak | Lulus |
-| 6 | Tambah ulasan | Ulasan tersimpan pada produk | Lulus |
-| 7 | Nama pengulas sama pada produk yang sama | P2002 ditolak | Lulus |
-| 8 | Ulasan dengan productId palsu | P2003 ditolak | Lulus |
-| 9 | Hapus langsung produk berulasan | RESTRICT menolak penghapusan | Lulus |
+| 1 | Membuat produk | Produk tersimpan dan ID dibuat | Lulus |
+| 2 | Membaca produk | Produk tersimpan dapat dibaca | Lulus |
+| 3 | Memperbarui produk | Deskripsi baru tersimpan | Lulus |
+| 4 | Membuat ulasan | Ulasan tersimpan pada produk | Lulus |
+| 5 | Membaca ulasan melalui relasi produk | Ulasan terkait dapat dibaca | Lulus |
+| 6 | Memperbarui ulasan | Rating dan komentar baru tersimpan | Lulus |
+| 7 | Menghapus ulasan | Ulasan tidak lagi ditemukan | Lulus |
+| 8 | Ulasan dengan productId palsu | Foreign key menolak dengan P2003 | Lulus |
+| 9 | Hapus langsung produk berulasan | RESTRICT menolak dengan P2003 | Lulus |
 | 10 | Query kedua transaksi gagal | Perubahan ulasan di-rollback | Lulus |
 | 11 | Hapus produk beserta ulasan | Kedua entitas terhapus atomik | Lulus |
 
-Hasil `npm run db:test`: 11/11 skenario lulus (100%). Target modul minimal 9 dari 10 skenario, sehingga ambang tercapai. `npm test` tanpa `RUN_DB_TESTS=1` menghasilkan 34 tes lulus dan 11 tes integrasi dilewati; hasil suite ini tidak menggantikan hasil `npm run db:test`.
+Hasil `npm run db:test`: 11/11 skenario lulus (100%). Target modul minimal 9 dari 10 skenario, sehingga ambang tercapai. `npm test` tanpa `RUN_DB_TESTS=1` menghasilkan 38 tes lulus dan 11 tes integrasi dilewati; hasil suite ini tidak menggantikan hasil `npm run db:test`.
 
 ## 7. Kendala dan Penyelesaian
 
@@ -183,4 +184,4 @@ Hasil `npm run db:test`: 11/11 skenario lulus (100%). Target modul minimal 9 dar
 
 ## 8. Catatan Pemanfaatan AI
 
-GitHub Copilot membantu meninjau kode dan menyusun dokumentasi serta skenario verifikasi. Perintah yang dijalankan: `npx prisma validate` (berhasil), `npx prisma migrate status` (up to date), `npm run db:generate` (berhasil), `npm run db:seed` dua kali (masing-masing 7 produk dan 8 ulasan), `npm run db:test` (11/11 lulus), `npx tsc --noEmit` (berhasil), `npm run lint` (berhasil), dan `npm test` (34 lulus, 11 integrasi dilewati). Tangkapan layar seed tersimpan di `docs/praktikum/2seed.png`, PostgreSQL di `docs/praktikum/postgreSQL_constraint.png`, Prisma Studio di `docs/evidence/modul-06-prisma-studio.png`, P2002 di `docs/praktikum/nama_produk_sudah_digunakan.png`, P2025 di `docs/praktikum/produk_tidak_ditemukan_atau_sudah_dihapus.png`, dan hasil tes rollback di `rollback.png`.
+GitHub Copilot membantu meninjau kode dan menyusun dokumentasi serta skenario verifikasi. Perintah yang dijalankan: `npx prisma validate` (berhasil), `npx prisma migrate status` (up to date), `npm run db:generate` (berhasil), `npm run db:seed` dua kali (masing-masing 7 produk dan 8 ulasan), `npm run db:test` (11/11 lulus), `npx tsc --noEmit` (berhasil), `npm run lint` (berhasil), dan `npm test` (38 lulus, 11 integrasi dilewati). Tangkapan layar seed tersimpan di `docs/praktikum/2seed.png`, PostgreSQL di `docs/praktikum/postgreSQL_constraint.png`, Prisma Studio di `docs/evidence/modul-06-prisma-studio.png`, P2002 di `docs/praktikum/nama_produk_sudah_digunakan.png`, P2025 di `docs/praktikum/produk_tidak_ditemukan_atau_sudah_dihapus.png`, dan hasil tes rollback di `rollback.png`.

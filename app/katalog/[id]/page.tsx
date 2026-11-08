@@ -147,14 +147,17 @@ async function DetailProduk({
                   {review.comment}
                 </p>
                 {sesi && (
-                  <form
-                    action={hapusUlasan.bind(null, review.id, product.id)}
-                    className="mt-3"
-                  >
-                    <button className="text-sm text-red-700 underline">
-                      Hapus ulasan
-                    </button>
-                  </form>
+                  <>
+                    <FormUlasan productId={product.id} review={review} />
+                    <form
+                      action={hapusUlasan.bind(null, review.id, product.id)}
+                      className="mt-3"
+                    >
+                      <button className="text-sm text-red-700 underline">
+                        Hapus ulasan
+                      </button>
+                    </form>
+                  </>
                 )}
               </li>
             ))}

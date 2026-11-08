@@ -1,16 +1,60 @@
 # MTM Solusindo — Technology Product Catalog
 
+## Milestone 2 (v0.2)
+
+MTM Solusindo melanjutkan prototipe v0.1 menjadi katalog produk persisten.
+Produk dan ulasan kini disimpan di PostgreSQL melalui Prisma ORM 7. Server
+Actions menangani create, read, update, dan delete untuk kedua entitas,
+sementara Zod memvalidasi data di server dan menampilkan galat pada field.
+
+Relasi data adalah satu produk ke banyak ulasan. Pengelola dapat menambah,
+mengubah, dan menghapus produk serta mengubah atau menghapus ulasan; pengunjung
+dapat membaca katalog dan mengirim ulasan. Data seed bersifat sintetis.
+
+### Menjalankan Aplikasi
+
+Prasyarat: Node.js, npm, dan PostgreSQL yang dapat diakses melalui
+`DATABASE_URL`.
+
+```bash
+cp .env.example .env
+npm install
+npm run db:generate
+npm run db:migrate
+npm run db:seed
+npm run dev
+```
+
+Isi `DATABASE_URL`, `DEMO_EMAIL`, dan `DEMO_KATA_SANDI` di `.env` lokal. Jangan
+commit `.env` atau kredensial database. Prisma 7 membaca koneksi dari
+`prisma.config.ts`; `npm run db:seed` menjalankan seeding secara eksplisit.
+
+```bash
+npm test
+npm run db:test
+```
+
+`npm test` menjalankan tes unit dan melewati tes PostgreSQL. `npm run db:test`
+menjalankan 11 skenario integrasi dengan data sintetis serta membersihkan data
+uji setelah selesai. Skenario, hasil aktual, dan bukti UI/validasi ada di
+[`docs/pengujian-milestone-2.md`](docs/pengujian-milestone-2.md).
+
+### Perkembangan v0.1 ke v0.2
+
+- v0.1: katalog antarmuka responsif dengan data contoh dan validasi formulir
+	kontak di sisi klien.
+- v0.2: Next.js App Router, Server Actions, validasi Zod server-side,
+	PostgreSQL/Prisma ORM 7, migration, seed sintetis, relasi Produk–Ulasan,
+	CRUD kedua entitas, serta tes unit dan integrasi.
+
 ## 1. Deskripsi Proyek
 
-MTM Solusindo Technology Product Catalog merupakan prototipe antarmuka
-website katalog produk teknologi untuk kebutuhan bisnis.
+MTM Solusindo Technology Product Catalog merupakan website katalog produk
+teknologi untuk kebutuhan bisnis, dilanjutkan dari produk Milestone 1 v0.1.
 
-Website ini dirancang untuk membantu calon pelanggan mengenali kategori
-produk, melihat informasi produk, dan menyampaikan kebutuhan teknologi
-melalui formulir konsultasi.
-
-Proyek ini dibuat sebagai pemenuhan tugas Milestone 1 mata kuliah
-Pengembangan Aplikasi Web.
+Website membantu calon pelanggan mengenali kategori dan detail produk,
+membaca serta mengirim ulasan, dan menyampaikan kebutuhan konsultasi.
+Informasi produk dan ulasan disimpan secara persisten di PostgreSQL.
 
 ## 2. Tujuan dan Target Pengguna
 
@@ -30,6 +74,8 @@ Target pengguna:
 - Halaman Beranda untuk memperkenalkan katalog dan kategori produk.
 - Halaman Katalog untuk melihat informasi produk.
 - Halaman Kontak untuk menyampaikan kebutuhan melalui formulir.
+- Pengelolaan produk dan ulasan melalui Server Actions dengan validasi Zod.
+- Penyimpanan data produk dan ulasan secara persisten di PostgreSQL.
 - Navigasi ant halaman.
 - Komponen UI yang dapat digunakan kembali.
 - Validasi formulir pada sisi klien.
@@ -39,10 +85,14 @@ Target pengguna:
 
 ## 4. Teknologi
 
-- Next.js
+- Next.js App Router
 - React
 - TypeScript
 - Tailwind CSS
+- PostgreSQL
+- Prisma ORM 7
+- Zod
+- Vitest
 - ESLint
 
 ## 5. Halaman Website
@@ -51,19 +101,17 @@ Target pengguna:
 Memperkenalkan website, kategori teknologi, dan manfaat produk.
 
 ### Katalog
-Menampilkan enam contoh produk teknologi yang dikelompokkan
-berdasarkan kategori.
+Membaca produk aktif dari PostgreSQL dan menyediakan halaman detail produk
+beserta ulasan yang terkait.
 
 ### Kontak
 Menyediakan formulir konsultasi dengan validasi nama, email,
 perusahaan, kategori kebutuhan, dan deskripsi kebutuhan.
 
 ## 6. Data Produk
-
-Data produk dalam proyek ini merupakan data contoh untuk kebutuhan
-prototipe antarmuka. Nama, deskripsi, fitur, dan ID produk tidak
-dimaksudkan sebagai konfirmasi SKU resmi, harga, atau ketersediaan
-produk dari MTM Solusindo.
+Produk awal disiapkan sebagai data sintetis melalui `prisma/seed.ts`. Seluruh
+nama, deskripsi, dan fitur ditujukan untuk demonstrasi, bukan konfirmasi SKU,
+harga, atau ketersediaan resmi MTM Solusindo.
 
 ## 7. Validasi Formulir
 
@@ -74,34 +122,20 @@ Formulir melakukan pemeriksaan berikut:
 - Kategori kebutuhan wajib dipilih.
 - Deskripsi kebutuhan wajib diisi dengan minimal 10 karakter.
 
-Pesan kesalahan ditampilkan pada kolom yang memerlukan perbaikan.
-Jika semua input valid, website menampilkan pesan keberhasilan validasi.
-
-**Catatan:** Formulir masih berupa simulasi antarmuka. Data belum
-dikirim atau disimpan ke server.
+Pesan validasi kontak tampil pada kolom terkait. Formulir kontak masih berupa
+simulasi sisi klien dan belum disimpan. Formulir produk dan ulasan menggunakan
+validasi Zod di Server Actions; skenario dan bukti penolakannya tersedia pada
+[`docs/pengujian-milestone-2.md`](docs/pengujian-milestone-2.md).
 
 ## 8. Struktur Proyek
+Komponen utama Milestone 2:
 
-```text
-mtm-solusindo/
-├── app/
-│   ├── katalog/
-│   │   └── page.tsx
-│   ├── kontak/
-│   │   └── page.tsx
-│   ├── globals.css
-│   ├── layout.tsx
-│   └── page.tsx
-├── components/
-│   ├── Button.tsx
-│   ├── CategoryCard.tsx
-│   ├── Footer.tsx
-│   ├── Navbar.tsx
-│   └── ProductCard.tsx
-├── public/
-├── package.json
-├── README.md
-└── tsconfig.json
+- `app/katalog/`: halaman produk, formulir, dan Server Actions.
+- `components/`: komponen UI produk dan ulasan.
+- `lib/skema.ts`: skema validasi Zod.
+- `prisma/`: skema, migrasi, serta data seed sintetis.
+- `tests/`: tes unit dan integrasi PostgreSQL.
+- `docs/pengujian-milestone-2.md`: skenario uji dan tautan bukti.
 
 ## 9. Fondasi Kriptografi
 
