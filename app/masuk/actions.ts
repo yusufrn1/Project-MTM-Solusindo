@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { verifyPassword } from "@/lib/crypto/password";
 import { skemaMasuk } from "@/lib/skema";
 import { buatSesi, hapusSesi } from "@/lib/sesi";
 import type { StatusForm } from "@/lib/status-form";
@@ -16,10 +17,12 @@ export async function masuk(
     return { galat: z.flattenError(hasil.error).fieldErrors };
   }
 
-  if (
-    hasil.data.email !== process.env.DEMO_EMAIL ||
-    hasil.data.kataSandi !== process.env.DEMO_KATA_SANDI
-  ) {
+  const kataSandiValid = await verifyPassword(
+    hasil.data.kataSandi,
+    process.env.DEMO_KATA_SANDI_HASH,
+  );
+
+  if (hasil.data.email !== process.env.DEMO_EMAIL || !kataSandiValid) {
     return { pesan: "Email atau kata sandi salah." };
   }
 

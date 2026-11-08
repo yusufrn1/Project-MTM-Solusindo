@@ -20,3 +20,16 @@ Versi: sec-0.1 (draft). Risiko inheren = likelihood × impact, skala 1–5. 1–
 
 ## Asumsi dan tindak lanjut
 Skor adalah penilaian awal sebelum kontrol baru diterapkan, bukan statistik insiden. Penilaian perlu diperbarui jika aplikasi menambahkan backend, database, login/admin, penyimpanan data pelanggan, atau integrasi HMAC runtime. Kontrol di atas adalah rencana, bukan klaim sudah diterapkan.
+
+## Addendum Kontrol `sec-0.2`
+
+| Kontrol | Risiko Tugas 1 | Bukti/status |
+|---|---|---|
+| Guard sesi Server Actions untuk pengelolaan produk dan ulasan; tes positif/negatif seimbang | R-01, R-02, R-04 | Unit tests ada di `tests/access-control.test.ts`; jalankan `npm run security:test` |
+| Hash kata sandi demo dengan scrypt salted dan perbandingan timing-safe | R-03 | Implementasi `lib/crypto/password.ts`; dites dengan data sintetis |
+| Role DB runtime terpisah dari owner/migrator dan container tanpa port host | R-01, R-05 | Konfigurasi Compose dibuat; runtime image belum dijalankan |
+| Non-root, root filesystem read-only, capability drop, no-new-privileges | R-04, R-05 | Konfigurasi dibuat; perlu verifikasi Docker `inspect` |
+| SSH key-only dan audit Lynis pada VM | R-04, R-05 | Runbook tersedia; VM dan output audit belum tersedia |
+| Scan before/after dan SBOM CycloneDX | R-04, R-05 | Perintah terdokumentasi; image, scan, dan SBOM belum dihasilkan |
+
+Kontrol dan bukti dikelola pada direktori `security/`. Baris yang berstatus belum dijalankan tidak boleh dinyatakan lulus sampai bukti aktual ditambahkan.

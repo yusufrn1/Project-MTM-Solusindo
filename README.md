@@ -19,25 +19,35 @@ Prasyarat: Node.js, npm, dan PostgreSQL yang dapat diakses melalui
 ```bash
 cp .env.example .env
 npm install
+npm run security:hash-demo
+# Atur PRODUCT_INTEGRITY_KEY sesuai bagian 9.3 sebelum melanjutkan.
 npm run db:generate
 npm run db:migrate
+npm run security:sign-products -- --trust-current-data
 npm run db:seed
 npm run dev
 ```
 
-Isi `DATABASE_URL`, `DEMO_EMAIL`, dan `DEMO_KATA_SANDI` di `.env` lokal. Jangan
-commit `.env` atau kredensial database. Prisma 7 membaca koneksi dari
-`prisma.config.ts`; `npm run db:seed` menjalankan seeding secara eksplisit.
+Isi `DATABASE_URL` dan `DEMO_EMAIL` pada `.env` lokal. Jalankan
+`npm run security:hash-demo`, lalu simpan hasil hash sebagai
+`DEMO_KATA_SANDI_HASH`; jangan simpan password plaintext. Jangan commit `.env`
+atau kredensial database. Prisma 7 membaca koneksi dari `prisma.config.ts`;
+`npm run db:seed` menjalankan seeding secara eksplisit. Buat dan simpan
+`PRODUCT_INTEGRITY_KEY` sebelum migrasi, backfill, seed, dan menjalankan aplikasi.
+Backfill hanya diperlukan bila database sudah berisi produk yang telah ditinjau.
 
 ```bash
 npm test
 npm run db:test
+npm run security:test
 ```
 
 `npm test` menjalankan tes unit dan melewati tes PostgreSQL. `npm run db:test`
 menjalankan 11 skenario integrasi dengan data sintetis serta membersihkan data
 uji setelah selesai. Skenario, hasil aktual, dan bukti UI/validasi ada di
 [`docs/pengujian-milestone-2.md`](docs/pengujian-milestone-2.md).
+Kontrol akses, hashing password, serta status hardening Tugas 2 Keamanan ada di
+[`security/README.md`](security/README.md).
 
 ### Perkembangan v0.1 ke v0.2
 
@@ -141,59 +151,80 @@ Komponen utama Milestone 2:
 
 ### 9.1 Deskripsi dan Tujuan Keamanan
 
-Proyek MTM Solusindo merupakan prototipe katalog produk teknologi.
-Fondasi kriptografi dikembangkan sebagai langkah awal untuk membantu
-mendeteksi perubahan data produk yang tidak sah.
+Proyek MTM Solusindo merupakan prototipe katalog produk teknologi. Data produk
+diberi tag HMAC saat dibuat atau diubah, lalu tag diverifikasi sebelum produk
+dikeluarkan dari lapisan data.
 
-Komponen yang dibuat adalah Product Integrity menggunakan HMAC-SHA-256.
+Komponen yang dibuat adalah Product Integrity menggunakan HMAC-SHA-256. Rincian
+keputusan dan parameter ada di [`KEPUTUSAN.md`](KEPUTUSAN.md).
 
 ### 9.2 Kebutuhan Keamanan
 
 | Data | Tujuan Keamanan | Prioritas |
 |---|---|---|
-| ID dan nama produk | Mendeteksi perubahan identitas atau informasi produk | Tinggi |
-| Harga produk | Mendeteksi perubahan harga yang tidak sah | Tinggi |
-| Informasi kontak pelanggan jika kelak disimpan | Menjaga kerahasiaan data pelanggan | Tinggi |
+| Nama, kategori, deskripsi, fitur, status, dan gambar produk | Mendeteksi perubahan pada field katalog yang ditandatangani | Tinggi |
+| ID dan timestamp database | Tidak termasuk payload HMAC saat ini | Sedang |
+| Informasi kontak pelanggan jika kelak disimpan | Memerlukan kontrol kerahasiaan terpisah; HMAC tidak mengenkripsi | Tinggi |
 
 ### 9.3 Desain Komponen
 
-**Algoritma:** HMAC-SHA-256  
-**Library:** `node:crypto` bawaan Node.js.
+**Mekanisme:** HMAC-SHA-256 dari modul bawaan `node:crypto`. Kunci berupa
+Base64 kanonis yang mendekode tepat menjadi 32 byte. Gunakan
+`generateProductIntegrityKey()` atau Node.js `randomBytes(32)` untuk membuat
+kunci dengan CSPRNG.
 
-#### Input
-- Payload berupa string yang berisi data produk.
-- Kunci rahasia untuk membuat atau memverifikasi tanda tangan.
+Buat kunci sekali, lalu simpan sebagai `PRODUCT_INTEGRITY_KEY` di `.env` lokal
+atau secret manager deployment. `.env*` diabaikan Git; jangan menaruh nilai
+kunci pada `.env.example`, log, browser, atau payload request. Contoh pembuatan
+kunci tanpa menambahkannya ke repository; atur nilai hasilnya di environment
+server:
 
-#### Proses
-1. Data produk direpresentasikan sebagai string JSON.
-2. HMAC-SHA-256 dihitung menggunakan payload dan kunci rahasia.
-3. Hasil HMAC dikembalikan dalam format heksadesimal.
-4. Proses verifikasi menghitung ulang HMAC dan membandingkannya dengan tanda tangan yang diberikan.
-5. Perbandingan menggunakan `timingSafeEqual` setelah format dan panjang tanda tangan diperiksa.
+```bash
+node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('base64') + '\\n')"
+```
 
-#### Output
-- String heksadesimal sepanjang 64 karakter untuk tanda tangan.
-- `true` jika tanda tangan valid.
-- `false` jika verifikasi gagal.
-- Error jika payload atau kunci kosong ketika membuat tanda tangan.
+| Parameter | Nilai |
+|---|---|
+| Panjang kunci | 32 byte (256 bit), Base64 kanonis |
+| Nonce/IV | Tidak berlaku; HMAC deterministik dan tidak memakai nonce |
+| AAD | Tidak berlaku; seluruh data yang perlu diautentikasi harus dimasukkan ke payload UTF-8 |
+| Tag | HMAC-SHA-256 penuh, 32 byte atau 64 karakter heksadesimal |
+| Perbandingan | `timingSafeEqual` setelah validasi format dan panjang |
 
-#### Representasi Data
-Payload berupa string dengan encoding UTF-8. Data JSON perlu diserialisasi secara konsisten agar representasi input yang sama menghasilkan HMAC yang sama.
+Payload harus diserialisasi konsisten, misalnya JSON dengan urutan field tetap.
+Fungsi pembuat menolak payload kosong dan kunci dengan encoding/panjang salah.
+Fungsi verifikasi gagal tertutup dengan `false` untuk payload, tag, atau kunci
+yang tidak valid, termasuk ketika data atau tag dimodifikasi atau kunci berbeda.
+Tag disimpan pada kolom `Product.integrityTag`. Payload kanonis memuat nama,
+kategori, deskripsi, fitur, status aktif, path gambar, dan teks alternatif.
+Aksi create/update menandatangani nilai sebelum simpan; lapisan baca memverifikasi
+tag dan melempar error, tanpa mengembalikan produk, jika tag tidak ada atau gagal.
 
-#### Sumber Randomness
-HMAC-SHA-256 bersifat deterministik. Komponen ini tidak membutuhkan randomness dalam proses pembuatan atau verifikasi tanda tangan. Input dan kunci yang sama menghasilkan HMAC yang sama.
+Untuk database yang sudah berisi produk, tinjau dulu datanya, jalankan migrasi,
+lalu buat tag dengan perintah backfill yang eksplisit di atas. Perintah ini
+menandatangani nilai database saat ini; jangan gunakan untuk mengesahkan perubahan
+yang belum dipercaya. Baris lama tanpa tag tidak ditampilkan sampai proses ini
+berhasil.
 
 ### 9.4 Batasan Keamanan
 
-HMAC membantu mendeteksi perubahan data dan memverifikasi bahwa pembuat tanda tangan mengetahui kunci rahasia. HMAC tidak mengenkripsi data.
+HMAC memberikan integritas dan autentikasi, bukan kerahasiaan: payload tetap
+terbaca. Informasi katalog yang perlu dirahasiakan memerlukan enkripsi AEAD
+terpisah. Kunci yang hilang atau berubah juga membuat tag lama tidak dapat
+diverifikasi.
 
-Kunci rahasia harus dikelola di sisi server dan tidak boleh diekspos ke browser atau disimpan sebagai kredensial produksi dalam repositori.
-
-Komponen ini saat ini merupakan modul yang diuji secara terpisah. Komponen belum terintegrasi dengan proses penyimpanan atau perubahan data produk pada aplikasi.
+HMAC tidak mengenkripsi record database. Kunci yang hilang atau berubah membuat
+verifikasi gagal; rotasi kunci memerlukan penandatanganan ulang semua produk
+setelah datanya dipercaya. Integritas tag juga tidak melindungi dari kompromi
+server aplikasi yang memiliki akses ke kunci.
 
 ### 9.5 Pengujian Otomatis
 
-Pengujian menggunakan Vitest dan dapat dijalankan dengan:
+Tes kriptografi mencakup pembuatan dan pemuatan kunci, serialisasi payload,
+format dan determinisme tag, verifikasi data asli, serta penolakan data/tag yang
+diubah, format salah, payload kosong, kunci salah, dan kunci tidak valid. Tes
+aksi memastikan tag disimpan bersama perubahan produk. Jalankan dengan:
 
 ```bash
-npm test
+npx vitest run tests/crypto/product-integrity.test.ts tests/ubah-produk-action.test.ts
+```
