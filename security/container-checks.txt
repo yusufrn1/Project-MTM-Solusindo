@@ -1,0 +1,8 @@
+2026-11-09T14:23:13+00:00
+NAME                          IMAGE                       COMMAND                  SERVICE   CREATED          STATUS                    PORTS
+project-mtm-solusindo-app-1   project-mtm-solusindo-app   "docker-entrypoint.s…"   app       15 minutes ago   Up 15 minutes (healthy)   3000/tcp
+project-mtm-solusindo-db-1    postgres:17-alpine          "docker-entrypoint.s…"   db        17 minutes ago   Up 17 minutes (healthy)   5432/tcp
+uid=10001(nextjs) gid=10001(nextjs) groups=10001(nextjs)
+uid=70(postgres) gid=70(postgres) groups=70(postgres)
+user=10001:10001 capdrop=["ALL"] security=["no-new-privileges:true"] readonly=true ports={"3000/tcp":null}
+user=postgres capdrop=["ALL"] security=["no-new-privileges:true"] ports={"5432/tcp":null}

@@ -1,0 +1,5 @@
+2026-11-09T15:28:27+00:00
+permitrootlogin no
+pubkeyauthentication yes
+passwordauthentication no
+authenticationmethods publickey
