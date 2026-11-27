@@ -1,3 +1,4 @@
+import { generateProductIntegrityKey } from "@/lib/crypto/product-integrity";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("server-only", () => ({}));
@@ -31,6 +32,7 @@ import { ubahProduk } from "@/app/katalog/actions";
 describe("Server Action ubahProduk", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv("PRODUCT_INTEGRITY_KEY", generateProductIntegrityKey());
   });
 
   it("menangani P2025 ketika produk tidak ditemukan", async () => {

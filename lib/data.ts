@@ -1,6 +1,12 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
 
+import {
+  getProductIntegrityKey,
+  serializeProductIntegrityPayload,
+  verifyProductSignature,
+} from "@/lib/crypto/product-integrity";
+
 export type Produk = {
   id: number;
   kode: string;
@@ -45,6 +51,37 @@ const visualKategori: Record<string, Pick<Produk, "image" | "imageAlt">> = {
   },
 };
 
+function verifikasiIntegritasProduk(product: {
+  name: string;
+  category: string;
+  description: string;
+  features: string[];
+  active: boolean;
+  image: string | null;
+  imageAlt: string | null;
+  integrityTag: string | null;
+}) {
+  const valid =
+    product.integrityTag !== null &&
+    verifyProductSignature(
+      serializeProductIntegrityPayload({
+        name: product.name,
+        category: product.category,
+        description: product.description,
+        features: product.features,
+        active: product.active,
+        image: product.image,
+        imageAlt: product.imageAlt,
+      }),
+      product.integrityTag,
+      getProductIntegrityKey(),
+    );
+
+  if (!valid) {
+  throw new Error("Integritas data produk gagal diverifikasi.");
+}
+}
+
 function mapProduk(product: {
   id: number;
   name: string;
@@ -55,6 +92,8 @@ function mapProduk(product: {
   image: string | null;
   imageAlt: string | null;
   reviews?: UlasanProduk[];
+  integrityTag: string | null;
+
 }): Produk {
   const visual = visualKategori[product.category] ?? {
     image: "/images/data-collection-context.jpg",
@@ -79,6 +118,11 @@ export async function daftarProduk(): Promise<Produk[]> {
     where: { active: true },
     orderBy: { createdAt: "desc" },
   });
+
+  for (const product of products) {
+    verifikasiIntegritasProduk(product);
+  }
+
   return products.map(mapProduk);
 }
 
@@ -87,7 +131,12 @@ export async function cariProduk(id: number): Promise<Produk | null> {
     where: { id, active: true },
     include: { reviews: { orderBy: { createdAt: "desc" } } },
   });
-  return product ? mapProduk(product) : null;
+
+  if (!product) return null;
+
+  verifikasiIntegritasProduk(product);
+
+  return mapProduk(product);
 }
 
 export function gambarUntukKategori(category: string) {

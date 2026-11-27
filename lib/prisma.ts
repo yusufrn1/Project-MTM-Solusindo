@@ -14,6 +14,7 @@ function createPrismaClient() {
 
   return new PrismaClient({
     adapter: new PrismaPg({ connectionString }),
+    log: ["warn", "error"],
   });
 }
 

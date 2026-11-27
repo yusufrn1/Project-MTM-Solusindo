@@ -67,7 +67,7 @@ export const skemaProduk = z.object({
         .map((feature) => feature.trim())
         .filter(Boolean),
     ),
-  aktif: z.stringbool().default(false),
+  aktif: z.stringbool().default(false), 
 });
 
 export type MasukanProduk = z.infer<typeof skemaProduk>;

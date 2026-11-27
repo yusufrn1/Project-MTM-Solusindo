@@ -4,7 +4,7 @@ import {
   verifyProductSignature,
 } from "../../lib/crypto/product-integrity";
 
-const testKey = "synthetic-test-key-only-not-for-production";
+const testKey = Buffer.alloc(32, 1).toString("base64");
 
 const product = JSON.stringify({
   id: "PRD-001",

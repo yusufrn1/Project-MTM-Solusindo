@@ -5,7 +5,7 @@ import { daftarProduk } from "@/lib/data";
 
 export default async function KatalogPage() {
   await connection();
-  const products = await daftarProduk();
+  const products = await daftarProduk(); 
 
   return (
     <main>

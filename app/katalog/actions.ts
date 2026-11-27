@@ -5,6 +5,11 @@ import { redirect } from "next/navigation";
 import { Prisma } from "@/generated/prisma/client";
 import { z } from "zod";
 import { gambarUntukKategori } from "@/lib/data";
+import {
+  createProductSignature,
+  getProductIntegrityKey,
+  serializeProductIntegrityPayload,
+} from "@/lib/crypto/product-integrity";
 import { prisma } from "@/lib/prisma";
 import { skemaProduk, type MasukanProduk } from "@/lib/skema";
 import { bacaSesi } from "@/lib/sesi";
@@ -22,7 +27,7 @@ function nilaiForm(formData: FormData): Record<string, string> {
 }
 
 function dataProduk(masukan: MasukanProduk) {
-  return {
+  const payload = {
     name: masukan.name,
     category: masukan.category,
     description: masukan.description,
@@ -30,6 +35,13 @@ function dataProduk(masukan: MasukanProduk) {
     active: masukan.aktif,
     ...gambarUntukKategori(masukan.category),
   };
+
+  const integrityTag = createProductSignature(
+    serializeProductIntegrityPayload(payload),
+    getProductIntegrityKey(),
+  );
+
+  return { ...payload, integrityTag };
 }
 
 function galatDikenal(error: unknown): error is Prisma.PrismaClientKnownRequestError {
